@@ -5,7 +5,13 @@ const app = express();
 const allowedOrigins = ['https://bengilmo1111-github-io.vercel.app/'];
 
 app.use(cors({
-  origin: '*',
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
 }));
 
 require('dotenv').config();
@@ -23,6 +29,9 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 app.post('/api', async (req, res) => {
+  res.set('Access-Control-Allow-Origin', 'https://bengilmo1111-github-io.vercel.app/');
+  res.set('Access-Control-Allow-Headers', 'Content-Type');
+  
   const { input, history } = req.body;
 
   // Construct messages for GPT-4
