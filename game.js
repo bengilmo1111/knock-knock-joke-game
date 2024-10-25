@@ -17,17 +17,24 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const response = await fetch('https://bengilmo1111-github-f0ldym4tc-ben-gilmores-projects.vercel.app/api', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          // Add Accept header to explicitly state we want JSON
+          'Accept': 'application/json'
+        },
+        // Add credentials and mode based on CORS setup
+        credentials: 'include',
+        mode: 'cors',
         body: JSON.stringify({ input, history }),
       });
 
       if (!response.ok) {
-        console.error("Server responded with an error:", response.statusText);
+        const errorText = await response.text();
+        console.error("Server responded with an error:", response.status, errorText);
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
       const data = await response.json();
-
       if (data.response) {
         appendToConsole(data.response);
         history.push({ role: 'assistant', content: data.response });
@@ -48,6 +55,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Start the game
-  sendInput('start');
+  // Add error handling for initial game start
+  window.addEventListener('load', () => {
+    sendInput('start').catch(error => {
+      console.error("Error starting game:", error);
+      appendToConsole('Failed to start the game. Please refresh the page to try again.');
+    });
+  });
 });
