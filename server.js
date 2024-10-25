@@ -1,44 +1,46 @@
-const cors = require('cors');
 const express = require('express');
+const cors = require('cors');
+require('dotenv').config();
+const { Configuration, OpenAIApi } = require('openai');
+
 const app = express();
 
-const allowedOrigins = ['https://bengilmo1111-github-io.vercel.app/'];
+// Define allowed origins - remove trailing slash
+const allowedOrigins = ['https://bengilmo1111-github-io.vercel.app'];
 
+// Configure CORS
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+  origin: function(origin, callback) {
+    // Check if origin is allowed or if it's undefined (like postman requests)
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
     }
   },
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
 }));
 
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const { Configuration, OpenAIApi } = require('openai');
-
-const app = express();
-app.use(cors());
 app.use(express.json());
 
+// Configure OpenAI
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
 
-app.options('/api', cors());  // Preflight handling
-
+// API route
 app.post('/api', async (req, res) => {
-  res.set('Access-Control-Allow-Origin', 'https://bengilmo1111-github-io.vercel.app/');
-  res.set('Access-Control-Allow-Headers', 'Content-Type');
-  
   const { input, history } = req.body;
-
+  
   // Construct messages for GPT-4
   const messages = [
-    { role: 'system', content: 'You are a text-based adventure game. Create immersive experiences for the player. The game should be funny and have jokes and puns like Hitchhikers guide to the Galaxy. If a player is stuck and asks for help you should offer it to them.' },
+    { 
+      role: 'system', 
+      content: 'You are a text-based adventure game. Create immersive experiences for the player. The game should be funny and have jokes and puns like Hitchhikers guide to the Galaxy. If a player is stuck and asks for help you should offer it to them.' 
+    },
     ...history,
     { role: 'user', content: input },
   ];
