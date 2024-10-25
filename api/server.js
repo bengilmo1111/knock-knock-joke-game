@@ -50,6 +50,9 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
+// Debugging: Log the API key to check if it's being retrieved correctly
+console.log("API Key Loaded:", configuration.apiKey ? "Yes" : "No");
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
