@@ -41,4 +41,106 @@
         }
 
         #game-output::-webkit-scrollbar {
-            width
+            width: 8px;
+        }
+
+        #game-output::-webkit-scrollbar-track {
+            background: #222;
+        }
+
+        #game-output::-webkit-scrollbar-thumb {
+            background-color: #444;
+            border-radius: 4px;
+        }
+
+        #game-output p {
+            margin: 0.5em 0;
+            word-wrap: break-word;
+        }
+
+        #input-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        #game-input {
+            width: 100%;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 12px;
+            font-size: 1em;
+            background-color: #222;
+            color: white;
+            outline: none;
+            transition: border-color 0.3s ease;
+            font-family: 'Courier New', monospace;
+        }
+
+        #game-input:focus {
+            border-color: #666;
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+        }
+
+        #game-input::placeholder {
+            color: #666;
+        }
+
+        /* Loading indicator for when commands are processing */
+        .loading {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        /* Responsive design */
+        @media (max-width: 600px) {
+            #game-container {
+                width: 95%;
+                height: 95vh;
+                padding: 10px;
+            }
+
+            #game-input {
+                font-size: 16px; /* Prevents zoom on mobile */
+            }
+        }
+
+        /* Accessibility improvements */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+
+        /* High contrast mode */
+        @media (prefers-contrast: high) {
+            body {
+                background-color: #000;
+            }
+            #game-input {
+                border-color: white;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container" role="main">
+        <div id="game-output" role="log" aria-live="polite"></div>
+        <div id="input-container">
+            <input 
+                type="text" 
+                id="game-input" 
+                placeholder="Enter your command..." 
+                aria-label="Game command input"
+                autocomplete="off" 
+                autofocus 
+                spellcheck="false"
+            />
+        </div>
+    </div>
+
+    <!-- Load the game.js script after HTML elements are loaded -->
+    <script src="game.js"></script>
+</body>
+</html>
