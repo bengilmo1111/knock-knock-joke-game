@@ -14,8 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
     appendToConsole(`<strong>> ${input}</strong>`);
     history.push({ role: 'user', content: input });
 
-    try {
-        const response = await fetch('https://bengilmo1111-github-f0ldym4tc-ben-gilmores-projects.vercel.app/', {
+    try {        
+          const response = await fetch('https://bengilmo1111-github-f0ldym4tc-ben-gilmores-projects.vercel.app/api', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
