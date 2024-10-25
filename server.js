@@ -5,13 +5,7 @@ const app = express();
 const allowedOrigins = ['https://bengilmo1111-github-io.vercel.app/'];
 
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: '*',
 }));
 
 require('dotenv').config();
