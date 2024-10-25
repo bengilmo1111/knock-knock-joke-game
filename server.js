@@ -28,6 +28,8 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
+app.options('/api', cors());  // Preflight handling
+
 app.post('/api', async (req, res) => {
   res.set('Access-Control-Allow-Origin', 'https://bengilmo1111-github-io.vercel.app/');
   res.set('Access-Control-Allow-Headers', 'Content-Type');
