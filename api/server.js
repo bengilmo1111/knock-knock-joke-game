@@ -15,9 +15,9 @@ app.use((req, res, next) => {
 const allowedOrigins = ['https://bengilmo1111-github-io.vercel.app'];
 
 app.use(cors({
-  origin: function(origin, callback) {
+  origin: (origin, callback) => {
     console.log('Request origin:', origin); // Debug log
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+    if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       console.log('Origin not allowed:', origin);
@@ -28,6 +28,9 @@ app.use(cors({
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
 }));
+
+// Handle preflight requests
+app.options('*', cors());
 
 // Body parsing middleware
 app.use(express.json());
@@ -53,7 +56,7 @@ app.get('/health', (req, res) => {
 });
 
 // Main game endpoint
-app.post('/', async (req, res) => {
+app.post('/api', async (req, res) => {
   console.log('Received request body:', req.body); // Debug log
 
   const { input, history } = req.body;
@@ -79,15 +82,15 @@ app.post('/', async (req, res) => {
       messages: [
         { 
           role: 'system', 
-          content: 'You are a text-based adventure game. Create immersive experiences for the player. The game should be funny and have jokes and puns like Hitchhikers guide to the Galaxy. If a player is stuck and asks for help you should offer it to them.' 
+          content: 'You are a text-based adventure game. Create immersive experiences for the player. The game should be funny and have jokes and puns like Hitchhiker\'s Guide to the Galaxy. If a player is stuck and asks for help you should offer it to them.' 
         },
         ...history,
         { role: 'user', content: input },
       ],
       max_tokens: 150,
-      temperature: 0.8, // Add some randomness to responses
-      presence_penalty: 0.6, // Encourage the model to talk about new topics
-      frequency_penalty: 0.3 // Reduce repetition
+      temperature: 0.8,
+      presence_penalty: 0.6,
+      frequency_penalty: 0.3
     });
 
     const response = completion.data.choices[0].message.content.trim();
@@ -101,7 +104,6 @@ app.post('/', async (req, res) => {
       stack: error.stack
     });
 
-    // Handle specific OpenAI errors
     if (error.response) {
       return res.status(error.response.status).json({
         error: 'OpenAI API error',
@@ -109,14 +111,12 @@ app.post('/', async (req, res) => {
       });
     }
 
-    // Handle network errors
     if (error.code === 'ECONNREFUSED' || error.code === 'ECONNRESET') {
       return res.status(503).json({
         error: 'Service temporarily unavailable'
       });
     }
 
-    // Generic error handler
     res.status(500).json({
       error: 'An error occurred while processing your request',
       message: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
