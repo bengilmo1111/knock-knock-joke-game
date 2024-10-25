@@ -1,1 +1,41 @@
-"Hello world"
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Adventure Game</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: monospace;
+        }
+        #game-container {
+            width: 80%;
+            max-width: 600px;
+            border: 1px solid white;
+            padding: 20px;
+            height: 80vh;
+            overflow-y: auto;
+        }
+        #game-input {
+            width: 100%;
+            background: black;
+            color: white;
+            border: none;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="game-output"></div>
+        <input type="text" id="game-input" autofocus />
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
