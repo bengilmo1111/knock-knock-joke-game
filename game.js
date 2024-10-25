@@ -15,19 +15,17 @@ async function sendInput(input) {
 
   try {
     const response = await fetch('https://bengilmo1111-github-f0ldym4tc-ben-gilmores-projects.vercel.app/api', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ input, history }),
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ input, history }),
     });
+
     if (!response.ok) {
-        console.error("Server responded with an error:", response.statusText);
-        throw new Error(`HTTP error! Status: ${response.status}`);
+      console.error("Server responded with an error:", response.statusText);
+      throw new Error(`HTTP error! Status: ${response.status}`);
     }
+
     const data = await response.json();
-    // Handle data as needed, e.g., display to console
-    } catch (error) {
-    console.error("Fetch error:", error);
-    }
 
     if (data.response) {
       appendToConsole(data.response);
@@ -36,20 +34,10 @@ async function sendInput(input) {
       appendToConsole('Error: ' + data.error);
     }
   } catch (error) {
-    console.error(error);
+    console.error("Fetch error:", error);
     appendToConsole('An error occurred while connecting to the server.');
   }
 }
 
 inputElement.addEventListener('keydown', (event) => {
-  if (event.key === 'Enter' && inputElement.value.trim() !== '') {
-    const userInput = inputElement.value.trim();
-    inputElement.value = '';
-    sendInput(userInput);
-  }
-});
-
-// Start the game
-window.onload = () => {
-  sendInput('start');
-};
+  if (event.key === 'Enter' && inputEleme
