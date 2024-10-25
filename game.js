@@ -40,4 +40,14 @@ async function sendInput(input) {
 }
 
 inputElement.addEventListener('keydown', (event) => {
-  if (event.key === 'Enter' && inputEleme
+  if (event.key === 'Enter' && inputElement.value.trim() !== '') {
+    const userInput = inputElement.value.trim();
+    inputElement.value = '';
+    sendInput(userInput);
+  }
+});
+
+// Start the game
+window.onload = () => {
+  sendInput('start');
+};
