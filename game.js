@@ -15,11 +15,19 @@ async function sendInput(input) {
 
   try {
     const response = await fetch('https://bengilmo1111-github-f0ldym4tc-ben-gilmores-projects.vercel.app/api', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ input, history }),
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ input, history }),
     });
+    if (!response.ok) {
+        console.error("Server responded with an error:", response.statusText);
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
     const data = await response.json();
+    // Handle data as needed, e.g., display to console
+    } catch (error) {
+    console.error("Fetch error:", error);
+    }
 
     if (data.response) {
       appendToConsole(data.response);
