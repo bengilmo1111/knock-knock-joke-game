@@ -15,37 +15,35 @@ document.addEventListener('DOMContentLoaded', () => {
     history.push({ role: 'user', content: input });
 
     try {
-      const response = await fetch('https://bengilmo1111-github-f0ldym4tc-ben-gilmores-projects.vercel.app/api', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          // Add Accept header to explicitly state we want JSON
-          'Accept': 'application/json'
-        },
-        // Add credentials and mode based on CORS setup
-        credentials: 'include',
-        mode: 'cors',
-        body: JSON.stringify({ input, history }),
-      });
+        const response = await fetch('https://bengilmo1111-github-f0ldym4tc-ben-gilmores-projects.vercel.app/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            credentials: 'include',
+            mode: 'cors',
+            body: JSON.stringify({ input, history }),
+        });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Server responded with an error:", response.status, errorText);
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Server responded with an error:", response.status, errorText);
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
 
-      const data = await response.json();
-      if (data.response) {
-        appendToConsole(data.response);
-        history.push({ role: 'assistant', content: data.response });
-      } else {
-        appendToConsole('Error: ' + data.error);
-      }
+        const data = await response.json();
+        if (data.response) {
+            appendToConsole(data.response);
+            history.push({ role: 'assistant', content: data.response });
+        } else {
+            appendToConsole('Error: ' + data.error);
+        }
     } catch (error) {
-      console.error("Fetch error:", error);
-      appendToConsole('An error occurred while connecting to the server.');
+        console.error("Fetch error:", error);
+        appendToConsole('An error occurred while connecting to the server.');
     }
-  }
+}
 
   inputElement.addEventListener('keydown', (event) => {
     if (event.key === 'Enter' && inputElement.value.trim() !== '') {
