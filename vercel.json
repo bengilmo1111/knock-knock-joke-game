@@ -12,12 +12,12 @@
   ],
   "routes": [
     {
-      "src": "/api/(.*)",     // Route for backend API requests
-      "dest": "/server.js"     // API handled by server.js
+      "src": "/api/(.*)",
+      "dest": "/server.js"
     },
     {
-      "src": "/(.*)",          // Route for all other requests
-      "dest": "/index.html"  // Serve index.html for the frontend
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ],
   "headers": [
