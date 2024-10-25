@@ -29,3 +29,23 @@
       flex: 1;
       padding: 10px;
       overflow-y: auto;
+    }
+    #game-input {
+      width: 100%;
+      border: none;
+      padding: 10px;
+      font-size: 1em;
+      background-color: #222;
+      color: white;
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container">
+    <div id="game-output" id="console"></div>
+    <input type="text" id="game-input" placeholder="Enter your command..." autocomplete="off" autofocus />
+  </div>
+  <script src="game.js"></script>
+</body>
+</html>
