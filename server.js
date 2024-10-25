@@ -1,3 +1,19 @@
+const cors = require('cors');
+const express = require('express');
+const app = express();
+
+const allowedOrigins = ['https://bengilmo1111-github-io.vercel.app/'];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+}));
+
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
