@@ -64,59 +64,54 @@
             align-items: center;
         }
 
-        #game-input {
-            width: 100%;
+        /* Styling for input field, voice, and toggle buttons */
+        #game-input,
+        #voice-button,
+        #speech-toggle {
             border: 1px solid #333;
-            border-radius: 4px;
-            padding: 12px;
-            font-size: 1em;
             background-color: #222;
             color: white;
+            font-size: 1em;
+            padding: 12px;
+            font-family: 'Courier New', monospace;
             outline: none;
             transition: border-color 0.3s ease;
-            font-family: 'Courier New', monospace;
-        }
-
-        #game-input:focus {
-            border-color: #666;
-            box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
-        }
-
-        #game-input::placeholder {
-            color: #666;
-        }
-
-        #voice-button {
-            background: none;
-            border: none;
-            font-size: 1.5em;
-            color: white;
-            cursor: pointer;
-            padding: 0 10px;
-            outline: none;
-            margin-left: 10px;
-        }
-
-        #voice-button:focus, #game-input:focus {
-            border-color: #666;
-            box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
-        }
-
-        /* Toggle button styling */
-        #speech-toggle {
-            background: none;
-            border: 1px solid #444;
-            color: white;
-            padding: 5px 10px;
-            font-size: 1em;
-            cursor: pointer;
             border-radius: 4px;
-            margin-left: 10px;
-            transition: background-color 0.3s ease;
         }
 
-        #speech-toggle.on {
+        #game-input {
+            width: 100%;
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        #voice-button,
+        #speech-toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 15px;
+            cursor: pointer;
+            margin-left: -1px;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            border-color: #333;
+        }
+
+        #voice-button:hover,
+        #speech-toggle:hover {
             background-color: #444;
+        }
+
+        #speech-toggle {
+            border-top-right-radius: 4px;
+            border-bottom-right-radius: 4px;
+            margin-left: -1px;
+        }
+
+        #game-input:focus, #voice-button:focus, #speech-toggle:focus {
+            border-color: #666;
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
         }
 
         /* Responsive design */
@@ -128,7 +123,7 @@
             }
 
             #game-input {
-                font-size: 16px; /* Prevents zoom on mobile */
+                font-size: 16px;
             }
         }
     </style>

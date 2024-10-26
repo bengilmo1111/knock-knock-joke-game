@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Base URL for your API
   const BASE_URL = 'https://bengilmo1111-github-io.vercel.app';
 
+  // Initial title and intro messages
+  const introMessage = "Welcome to the game of destiny. Will you be a hero, or doomed to wander forever? Play on, brave adventurer.";
+
   // Append text to game console and optionally speak it
   function appendToConsole(text, speak = false) {
     const paragraph = document.createElement('p');
@@ -39,19 +42,21 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleButton.classList.toggle('on', speechEnabled);
   };
 
-  // Handle Enter key in the input field for keyboard input
-  inputElement.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter' && inputElement.value.trim() !== '') {
-      const userInput = inputElement.value.trim();
-      inputElement.value = ''; // Clear the input field
-      sendInput(userInput); // Send the user input to the game
-    }
-  });
+  // Display intro message and initiate first Cohere response
+  function startGame() {
+    appendToConsole(`<strong>${introMessage}</strong>`, true);
 
-  // Example sendInput function for handling input
-  async function sendInput(input) {
-    appendToConsole(`<strong>> ${input}</strong>`, false);
-    history.push({ role: 'user', content: input });
+    // Add the intro message to history and send initial request to Cohere
+    history.push({ role: 'system', content: introMessage });
+    sendInput("start", true); // Set `true` for initial request so it doesn't wait for user input
+  }
+
+  // Modified sendInput to handle both user and initial Cohere requests
+  async function sendInput(input, isInitial = false) {
+    if (!isInitial) {
+      appendToConsole(`<strong>> ${input}</strong>`, false);
+      history.push({ role: 'user', content: input });
+    }
 
     try {
       const isHealthy = await checkHealth();
@@ -70,6 +75,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (data.response) {
         appendToConsole(data.response, true);
         history.push({ role: 'assistant', content: data.response });
+
+        // If this is the initial request, set up for the user’s turn
+        if (isInitial) {
+          inputElement.focus();
+        }
       } else {
         appendToConsole('Error: ' + data.error);
       }
@@ -90,6 +100,18 @@ document.addEventListener('DOMContentLoaded', () => {
       return false;
     }
   }
+
+  // Handle Enter key in the input field for keyboard input
+  inputElement.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' && inputElement.value.trim() !== '') {
+      const userInput = inputElement.value.trim();
+      inputElement.value = ''; // Clear the input field
+      sendInput(userInput); // Send the user input to the game
+    }
+  });
+
+  // Start the game on page load with the intro and Cohere response
+  startGame();
 
   // Voice recognition setup (preserves existing voice input functionality)
   let recognition;
