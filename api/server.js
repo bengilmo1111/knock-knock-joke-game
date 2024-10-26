@@ -1,8 +1,8 @@
 // api/server.js
-const express = require('express');
-const cors = require('cors');
-require('dotenv').config();
-const cohere = require('cohere-ai');
+import express from 'express';
+import cors from 'cors';
+import cohere from 'cohere-ai';
+import 'dotenv/config';
 
 // Initialize Cohere with your API key
 cohere.init(process.env.COHERE_API_KEY);
