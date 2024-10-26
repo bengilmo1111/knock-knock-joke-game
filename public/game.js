@@ -90,26 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('load', async () => {
     appendToConsole('Checking server connection...');
 
-    // Initial fetch example - remove if not needed
-    try {
-      const response = await fetch(`${BASE_URL}/api`, {
-        method: 'GET', // or the appropriate method for your endpoint
-        headers: {
-          'Accept': 'application/json'
-        },
-        mode: 'cors'
-      });
-
-      if (!response.ok) {
-        throw new Error(`Initial API call failed with status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log('Initial API response:', data);
-    } catch (error) {
-      console.error("Initial fetch error:", error);
-    }
-
     // Start the health check process
     try {
       const isHealthy = await checkHealth();
