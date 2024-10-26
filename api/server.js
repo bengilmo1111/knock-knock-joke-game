@@ -74,7 +74,6 @@ const handler = async (req, res) => {
         max_tokens: 150,
         temperature: 0.8,
         frequency_penalty: 0.5,
-        presence_penalty: 0.3,
       };
 
       // Send request to Cohere v2 chat endpoint
