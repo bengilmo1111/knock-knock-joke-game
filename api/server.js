@@ -84,8 +84,7 @@ const handler = async (req, res) => {
         frequency_penalty: 0.5,
         presence_penalty: 0.3
       });
-
-      console.log('Cohere response:', cohereResponse.body);
+      
       const responseText = cohereResponse.body.generations[0].text.trim();
 
       return res.json({ response: responseText });
