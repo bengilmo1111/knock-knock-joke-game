@@ -3,18 +3,24 @@ document.addEventListener('DOMContentLoaded', () => {
   const inputElement = document.getElementById('game-input');
   let history = [];
   let selectedVoice;
+  let voicesLoaded = false;
 
-  // Load voices and select "Google UK English Male" or a fallback voice
+  // Function to load voices and select "Google UK English Male" if available
   function loadVoices() {
     const voices = window.speechSynthesis.getVoices();
-    selectedVoice = voices.find(voice => voice.name === 'Google UK English Male') || voices[0]; // Default to first available if not found
+    selectedVoice = voices.find(voice => voice.name === 'Google UK English Male') || voices[0]; // Default to first available voice if not found
+    voicesLoaded = true;
     console.log("Selected voice:", selectedVoice);
   }
 
-  // Ensure voices are fully loaded, especially on desktop Chrome
-  if (window.speechSynthesis.getVoices().length === 0) {
-    window.speechSynthesis.onvoiceschanged = loadVoices;
-  } else {
+  // Ensure voices are loaded and available on Chrome Desktop
+  window.speechSynthesis.onvoiceschanged = () => {
+    loadVoices();
+    // Trigger a call to `speakText` to verify sound if needed (optional)
+  };
+
+  // If voices are already loaded, load them immediately
+  if (window.speechSynthesis.getVoices().length > 0) {
     loadVoices();
   }
 
@@ -32,7 +38,13 @@ document.addEventListener('DOMContentLoaded', () => {
     consoleElement.scrollTop = consoleElement.scrollHeight;
 
     // Use text-to-speech if enabled and requested
-    if (speechEnabled && speak) speakText(text);
+    if (speechEnabled && speak) {
+      if (voicesLoaded) {
+        speakText(text);
+      } else {
+        setTimeout(() => speakText(text), 100); // Delay to allow voice loading
+      }
+    }
   }
 
   function speakText(text) {
