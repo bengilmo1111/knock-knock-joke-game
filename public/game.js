@@ -1,6 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-  console.log("Script initialized");
-
   const consoleElement = document.getElementById('game-output');
   const inputElement = document.getElementById('game-input');
   let history = [];
@@ -8,17 +6,23 @@ document.addEventListener('DOMContentLoaded', () => {
   // Base URL for your API
   const BASE_URL = 'https://bengilmo1111-github-io.vercel.app';
 
-  function appendToConsole(text) {
+  // Initial title message
+  const titleMessage = "Welcome to the world of adventure! Will you be a hero or will you be doomed to wander forever. Choose your destiny!";
+
+  // Append text to game console and optionally speak it
+  function appendToConsole(text, speak = false) {
     const paragraph = document.createElement('p');
     paragraph.innerHTML = text;
     consoleElement.appendChild(paragraph);
     consoleElement.scrollTop = consoleElement.scrollHeight;
+
+    // Use text-to-speech if requested
+    if (speak) speakText(text);
   }
 
   // Text-to-speech function
   function speakText(text) {
     if ('speechSynthesis' in window) {
-      console.log("Starting text-to-speech");
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'en-US';
       utterance.rate = 1;
@@ -28,6 +32,9 @@ document.addEventListener('DOMContentLoaded', () => {
       console.warn("Text-to-speech not supported in this browser.");
     }
   }
+
+  // Show the title message on load
+  appendToConsole(`<strong>${titleMessage}</strong>`, true);
 
   // Voice recognition setup
   let recognition;
