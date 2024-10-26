@@ -88,13 +88,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Game initialization
   window.addEventListener('load', async () => {
-    appendToConsole('Checking server connection...');
+  //  appendToConsole('Checking server connection...');
 
     // Start the health check process
     try {
       const isHealthy = await checkHealth();
       if (isHealthy) {
-        appendToConsole('Connected to server successfully!');
+      //  appendToConsole('Connected to server successfully!');
         sendInput('start');
       } else {
         appendToConsole('Unable to connect to server. Please refresh the page or try again later.');
