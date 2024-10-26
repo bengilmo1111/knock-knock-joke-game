@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const inputElement = document.getElementById('game-input');
   let history = [];
 
-  // Base URL for your API
+  // Base URL for your API - update this to your actual server URL
   const BASE_URL = 'https://bengilmo1111-github-f0ldym4tc-ben-gilmores-projects.vercel.app';
 
   function appendToConsole(text) {
@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     consoleElement.scrollTop = consoleElement.scrollHeight;
   }
 
-  // Add health check function
+  // Health check function
   async function checkHealth() {
     try {
       const response = await fetch(`${BASE_URL}/api/health`, {
@@ -54,7 +54,6 @@ document.addEventListener('DOMContentLoaded', () => {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        credentials: 'include',
         mode: 'cors',
         body: JSON.stringify({ input, history }),
       });
@@ -74,10 +73,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } catch (error) {
       console.error("Fetch error:", error);
-      appendToConsole('An error occurred while connecting to the server.');
+      appendToConsole('An error occurred while connecting to the server. Please try again.');
     }
   }
 
+  // Handle user input when Enter is pressed
   inputElement.addEventListener('keydown', (event) => {
     if (event.key === 'Enter' && inputElement.value.trim() !== '') {
       const userInput = inputElement.value.trim();
@@ -86,18 +86,40 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Modified game start with health check
+  // Game initialization
   window.addEventListener('load', async () => {
+    appendToConsole('Checking server connection...');
     try {
       const isHealthy = await checkHealth();
       if (isHealthy) {
+        appendToConsole('Connected to server successfully!');
+        // Start the game with an initial prompt
         sendInput('start');
       } else {
-        appendToConsole('Server is not responding. Please try again later.');
+        appendToConsole('Unable to connect to server. Please refresh the page or try again later.');
       }
     } catch (error) {
       console.error("Error starting game:", error);
       appendToConsole('Failed to start the game. Please refresh the page to try again.');
     }
+  });
+
+  // Optional: Add a visual indicator when the input is focused
+  inputElement.addEventListener('focus', () => {
+    inputElement.classList.add('focused');
+  });
+
+  inputElement.addEventListener('blur', () => {
+    inputElement.classList.remove('focused');
+  });
+
+  // Optional: Scroll to bottom when new content is added
+  const observer = new MutationObserver(() => {
+    consoleElement.scrollTop = consoleElement.scrollHeight;
+  });
+
+  observer.observe(consoleElement, {
+    childList: true,
+    subtree: true
   });
 });

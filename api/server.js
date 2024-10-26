@@ -4,13 +4,15 @@ const cors = require('cors');
 require('dotenv').config();
 const { Configuration, OpenAIApi } = require('openai');
 
-// Initialize express
-const app = express();
+// Update allowed origins to include your new domain
+const allowedOrigins = [
+  'https://bengilmo1111-github-io.vercel.app',
+  'https://bengilmo1111-github-f0ldym4tc-ben-gilmores-projects.vercel.app'
+];
 
-// CORS configuration
-const allowedOrigins = ['https://bengilmo1111-github-io.vercel.app'];
 const corsOptions = {
   origin: (origin, callback) => {
+    console.log('Request origin:', origin); // Debug log
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -22,6 +24,29 @@ const corsOptions = {
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
 };
+
+// Create handler for Vercel
+const handler = async (req, res) => {
+  // Add CORS headers to all responses
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Origin', allowedOrigins.includes(req.headers.origin) ? req.headers.origin : allowedOrigins[0]);
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept');
+
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  // Enable CORS for all requests
+  await new Promise((resolve, reject) => {
+    cors(corsOptions)(req, res, (result) => {
+      if (result instanceof Error) {
+        return reject(result);
+      }
+      return resolve(result);
+    });
+  });
 
 // OpenAI configuration
 const configuration = new Configuration({
