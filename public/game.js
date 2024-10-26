@@ -2,12 +2,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const consoleElement = document.getElementById('game-output');
   const inputElement = document.getElementById('game-input');
   let history = [];
+  let selectedVoice;
 
-  // Ensure voices are loaded and available
-  window.speechSynthesis.onvoiceschanged = () => {
+  // Load voices and select "Google UK English Male" or a fallback voice
+  function loadVoices() {
     const voices = window.speechSynthesis.getVoices();
-    console.log("Available voices:", voices); // Log available voices to check names
-  };
+    selectedVoice = voices.find(voice => voice.name === 'Google UK English Male') || voices[0]; // Default to first available if not found
+    console.log("Selected voice:", selectedVoice);
+  }
+
+  // Ensure voices are fully loaded, especially on desktop Chrome
+  if (window.speechSynthesis.getVoices().length === 0) {
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+  } else {
+    loadVoices();
+  }
 
   // Base URL for your API
   const BASE_URL = 'https://bengilmo1111-github-io.vercel.app';
@@ -29,14 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function speakText(text) {
     if ('speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(text);
-
-      // Load all available voices
-      const voices = window.speechSynthesis.getVoices();
-
-      // Find and set "Google UK English Male" if available
-      utterance.voice = voices.find(voice => voice.name === 'Google UK English Male') || voices[0]; // Default to the first voice if not found
-
-      // Additional speech properties
+      utterance.voice = selectedVoice; // Use the selected voice
       utterance.lang = 'en-GB'; // Set language to British English
       utterance.rate = 1; // Set speaking rate
       utterance.pitch = 1; // Set pitch
