@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const fetch = require('node-fetch'); // Import fetch for direct HTTP requests
+const fetch = require('node-fetch'); // Use fetch for HTTP requests
 
 // Allowed origins
 const allowedOrigins = ['https://bengilmo1111-github-io.vercel.app'];
@@ -58,22 +58,23 @@ const handler = async (req, res) => {
       }
 
       // Format messages as required by Cohere's v2 chat endpoint
-      const messages = history.map((entry) => ({
-        role: entry.role === 'user' ? 'User' : 'Assistant',
-        content: entry.content
-      }));
-      messages.push({ role: 'User', content: input });
+      const messages = [
+        { role: 'system', content: "You are a text-based adventure game assistant. Respond concisely with humor and wit." },
+        ...history.map((entry) => ({
+          role: entry.role === 'user' ? 'user' : 'assistant',
+          content: entry.content
+        })),
+        { role: 'user', content: input }
+      ];
 
       // Prepare payload for Cohere's v2 chat endpoint
       const payload = {
-        model: 'command-r', // or 'command-r-plus' if applicable
+        model: 'command-r-plus-08-2024', // Update as per model availability
         messages: messages,
         max_tokens: 150,
         temperature: 0.8,
-        k: 0,
-        p: 0.75,
         frequency_penalty: 0.5,
-        presence_penalty: 0.3
+        presence_penalty: 0.3,
       };
 
       // Send request to Cohere v2 chat endpoint
@@ -96,7 +97,8 @@ const handler = async (req, res) => {
         });
       }
 
-      const responseText = responseData.message?.content || 'No response generated';
+      // Extract the assistant's response
+      const responseText = responseData.message.content[0].text;
 
       return res.json({ response: responseText });
 
