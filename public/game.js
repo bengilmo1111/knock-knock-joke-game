@@ -3,6 +3,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const inputElement = document.getElementById('game-input');
   let history = [];
 
+  // Speech output control
+  let speechEnabled = false;
+
   // Base URL for your API
   const BASE_URL = 'https://bengilmo1111-github-io.vercel.app';
 
@@ -16,8 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
     consoleElement.appendChild(paragraph);
     consoleElement.scrollTop = consoleElement.scrollHeight;
 
-    // Use text-to-speech if requested
-    if (speak) speakText(text);
+    // Use text-to-speech if enabled and requested
+    if (speechEnabled && speak) speakText(text);
   }
 
   // Text-to-speech function
@@ -32,6 +35,14 @@ document.addEventListener('DOMContentLoaded', () => {
       console.warn("Text-to-speech not supported in this browser.");
     }
   }
+
+  // Toggle speech output on and off
+  window.toggleSpeech = function () {
+    speechEnabled = !speechEnabled;
+    const toggleButton = document.getElementById('speech-toggle');
+    toggleButton.textContent = speechEnabled ? "🔊 Speech On" : "🔊 Speech Off";
+    toggleButton.classList.toggle('on', speechEnabled);
+  };
 
   // Show the title message on load
   appendToConsole(`<strong>${titleMessage}</strong>`, true);
