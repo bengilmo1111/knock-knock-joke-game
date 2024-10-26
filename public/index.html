@@ -7,10 +7,59 @@
     <title>Choose Your Destiny</title>
     <script type="text/javascript" src="game.js"></script>
     <style>
-        /* Styling same as before, except changes for input-container */
-        
+        body {
+            background-color: black;
+            color: white;
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        #game-container {
+            width: 90%;
+            max-width: 800px;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 20px;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            background-color: rgba(0, 0, 0, 0.8);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+
+        #game-output {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: #444 #222;
+        }
+
+        #game-output::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #game-output::-webkit-scrollbar-track {
+            background: #222;
+        }
+
+        #game-output::-webkit-scrollbar-thumb {
+            background-color: #444;
+            border-radius: 4px;
+        }
+
+        #game-output p {
+            margin: 0.5em 0;
+            word-wrap: break-word;
+        }
+
         #input-container {
-            position: relative;
             display: flex;
             align-items: center;
         }
@@ -28,6 +77,15 @@
             font-family: 'Courier New', monospace;
         }
 
+        #game-input:focus {
+            border-color: #666;
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+        }
+
+        #game-input::placeholder {
+            color: #666;
+        }
+
         #voice-button {
             background: none;
             border: none;
@@ -36,6 +94,7 @@
             cursor: pointer;
             padding: 0 10px;
             outline: none;
+            margin-left: 10px;
         }
 
         #voice-button:focus, #game-input:focus {
@@ -43,11 +102,26 @@
             box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
         }
 
+        /* Responsive design */
+        @media (max-width: 600px) {
+            #game-container {
+                width: 95%;
+                height: 95vh;
+                padding: 10px;
+            }
+
+            #game-input {
+                font-size: 16px; /* Prevents zoom on mobile */
+            }
+        }
     </style>
 </head>
 <body>
     <div id="game-container" role="main">
+        <!-- Game output area -->
         <div id="game-output" role="log" aria-live="polite"></div>
+        
+        <!-- Input and Voice Button Container -->
         <div id="input-container">
             <input 
                 type="text" 
