@@ -6,6 +6,7 @@ const cohere = require('cohere-ai');
 
 // Initialize Cohere with your API key
 cohere.init(process.env.COHERE_API_KEY);
+console.log("Cohere API initialized");
 
 // Allowed origins
 const allowedOrigins = ['https://bengilmo1111-github-io.vercel.app'];
@@ -52,20 +53,25 @@ const handler = async (req, res) => {
   if (req.method === 'POST' && req.url === '/api') {
     try {
       const { input, history } = req.body;
+      console.log('Received input:', input);
+      console.log('Received history:', history);
 
       if (!input) {
+        console.log('Error: Input is required');
         return res.status(400).json({ error: 'Input is required' });
       }
 
       if (!Array.isArray(history)) {
+        console.log('Error: History must be an array');
         return res.status(400).json({ error: 'History must be an array' });
       }
 
       const messages = history.map((entry) => `${entry.role === 'user' ? 'User' : 'Assistant'}: ${entry.content}`).join("\n");
       const prompt = `You are a text-based adventure game. Create immersive experiences for the player with humor and wit.\n\n${messages}\nUser: ${input}\nAssistant:`;
+      console.log('Prompt:', prompt);
 
       const cohereResponse = await cohere.generate({
-        model: 'command-xlarge-nightly', // or 'command-medium-nightly' for smaller models
+        model: 'command-xlarge-nightly', // Use 'command-medium-nightly' as a fallback if needed
         prompt: prompt,
         max_tokens: 150,
         temperature: 0.8,
@@ -75,12 +81,12 @@ const handler = async (req, res) => {
         presence_penalty: 0.3
       });
 
+      console.log('Cohere response:', cohereResponse.body);
       const responseText = cohereResponse.body.generations[0].text.trim();
-      console.log('Cohere response:', responseText);
 
       return res.json({ response: responseText });
     } catch (error) {
-      console.error('Error details:', {
+      console.error('Error during Cohere API call:', {
         message: error.message,
         response: error.response?.data,
         stack: error.stack
