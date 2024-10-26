@@ -3,10 +3,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const inputElement = document.getElementById('game-input');
   let history = [];
 
+  // Ensure voices are loaded and available
+  window.speechSynthesis.onvoiceschanged = () => {
+    const voices = window.speechSynthesis.getVoices();
+    console.log("Available voices:", voices); // Log available voices to check names
+  };
+
   // Base URL for your API
   const BASE_URL = 'https://bengilmo1111-github-io.vercel.app';
 
-  // Initial title and intro messages
+  // Initial title and intro message
   const introMessage = "Welcome to the game of destiny. Will you be a hero, or doomed to wander forever? Play on, brave adventurer.";
 
   // Append text to game console and optionally speak it
@@ -20,14 +26,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (speechEnabled && speak) speakText(text);
   }
 
-  // Text-to-speech function
   function speakText(text) {
     if ('speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-US';
-      utterance.rate = 1;
-      utterance.pitch = 1;
-      window.speechSynthesis.speak(utterance);
+
+      // Load all available voices
+      const voices = window.speechSynthesis.getVoices();
+
+      // Find and set "Google UK English Male" if available
+      utterance.voice = voices.find(voice => voice.name === 'Google UK English Male') || voices[0]; // Default to the first voice if not found
+
+      // Additional speech properties
+      utterance.lang = 'en-GB'; // Set language to British English
+      utterance.rate = 1; // Set speaking rate
+      utterance.pitch = 1; // Set pitch
+      window.speechSynthesis.speak(utterance); // Speak the text with the selected voice
     } else {
       console.warn("Text-to-speech not supported in this browser.");
     }
