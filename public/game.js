@@ -114,6 +114,28 @@ document.addEventListener('DOMContentLoaded', () => {
     inputElement.classList.remove('focused');
   });
 
+// Voice recognition setup
+const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+recognition.lang = 'en-US'; // Set language
+recognition.interimResults = false; // Only final results
+recognition.maxAlternatives = 1;
+
+// Start listening and handle result
+function startListening() {
+  recognition.start();
+  appendToConsole("Listening for voice input...");
+}
+
+recognition.onresult = (event) => {
+  const voiceInput = event.results[0][0].transcript;
+  appendToConsole(`<strong>> ${voiceInput}</strong>`);
+  sendInput(voiceInput); // Send recognized text as game input
+};
+
+recognition.onerror = (event) => {
+  appendToConsole("Error with voice input: " + event.error);
+};
+
   // Optional: Scroll to bottom when new content is added
   const observer = new MutationObserver(() => {
     consoleElement.scrollTop = consoleElement.scrollHeight;
