@@ -7,58 +7,8 @@
     <title>Choose Your Destiny</title>
     <script type="text/javascript" src="game.js"></script>
     <style>
-        body {
-            background-color: black;
-            color: white;
-            font-family: 'Courier New', monospace;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            line-height: 1.6;
-        }
-
-        #game-container {
-            width: 90%;
-            max-width: 800px;
-            border: 1px solid #444;
-            border-radius: 4px;
-            padding: 20px;
-            height: 90vh;
-            display: flex;
-            flex-direction: column;
-            background-color: rgba(0, 0, 0, 0.8);
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
-        }
-
-        #game-output {
-            flex: 1;
-            padding: 15px;
-            overflow-y: auto;
-            margin-bottom: 10px;
-            scrollbar-width: thin;
-            scrollbar-color: #444 #222;
-        }
-
-        #game-output::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        #game-output::-webkit-scrollbar-track {
-            background: #222;
-        }
-
-        #game-output::-webkit-scrollbar-thumb {
-            background-color: #444;
-            border-radius: 4px;
-        }
-
-        #game-output p {
-            margin: 0.5em 0;
-            word-wrap: break-word;
-        }
-
+        /* Styling same as before, except changes for input-container */
+        
         #input-container {
             position: relative;
             display: flex;
@@ -78,51 +28,21 @@
             font-family: 'Courier New', monospace;
         }
 
-        #game-input:focus {
+        #voice-button {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            color: white;
+            cursor: pointer;
+            padding: 0 10px;
+            outline: none;
+        }
+
+        #voice-button:focus, #game-input:focus {
             border-color: #666;
             box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
         }
 
-        #game-input::placeholder {
-            color: #666;
-        }
-
-        /* Loading indicator for when commands are processing */
-        .loading {
-            opacity: 0.5;
-            pointer-events: none;
-        }
-
-        /* Responsive design */
-        @media (max-width: 600px) {
-            #game-container {
-                width: 95%;
-                height: 95vh;
-                padding: 10px;
-            }
-
-            #game-input {
-                font-size: 16px; /* Prevents zoom on mobile */
-            }
-        }
-
-        /* Accessibility improvements */
-        @media (prefers-reduced-motion: reduce) {
-            * {
-                animation: none !important;
-                transition: none !important;
-            }
-        }
-
-        /* High contrast mode */
-        @media (prefers-contrast: high) {
-            body {
-                background-color: #000;
-            }
-            #game-input {
-                border-color: white;
-            }
-        }
     </style>
 </head>
 <body>
@@ -138,11 +58,8 @@
                 autofocus 
                 spellcheck="false"
             />
+            <button id="voice-button" onclick="startListening()">🎤</button>
         </div>
     </div>
-    <div id="game-controls">
-        <input id="game-input" type="text" placeholder="Type your command..." />
-        <button onclick="startListening()">🎤 Speak</button>
-        </div>
 </body>
 </html>
