@@ -74,6 +74,7 @@ const handler = async (req, res) => {
       const prompt = `You are a text-based adventure game. Create immersive experiences for the player with humor and wit.\n\n${messages}\nUser: ${input}\nAssistant:`;
       console.log('Prompt:', prompt);
 
+      // Correct API call to Cohere
       const cohereResponse = await cohere.generate({
         model: 'command-xlarge-nightly', // Use 'command-medium-nightly' as a fallback if needed
         prompt: prompt,
@@ -84,7 +85,8 @@ const handler = async (req, res) => {
         frequency_penalty: 0.5,
         presence_penalty: 0.3
       });
-      
+
+      // Retrieve the generated text
       const responseText = cohereResponse.body.generations[0].text.trim();
 
       return res.json({ response: responseText });
