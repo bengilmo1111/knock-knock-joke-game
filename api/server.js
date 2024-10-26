@@ -6,8 +6,7 @@ const { Configuration, OpenAIApi } = require('openai');
 
 // Update allowed origins to include your new domain
 const allowedOrigins = [
-  'https://bengilmo1111-github-io.vercel.app',
-  'https://bengilmo1111-github-f0ldym4tc-ben-gilmores-projects.vercel.app'
+  'https://bengilmo1111-github-io.vercel.app'
 ];
 
 const corsOptions = {
@@ -25,6 +24,13 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
 };
 
+// OpenAI configuration
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+const openai = new OpenAIApi(configuration);
+
 // Create handler for Vercel
 const handler = async (req, res) => {
   // Add CORS headers to all responses
@@ -39,25 +45,6 @@ const handler = async (req, res) => {
   }
 
   // Enable CORS for all requests
-  await new Promise((resolve, reject) => {
-    cors(corsOptions)(req, res, (result) => {
-      if (result instanceof Error) {
-        return reject(result);
-      }
-      return resolve(result);
-    });
-  });
-
-// OpenAI configuration
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-const openai = new OpenAIApi(configuration);
-
-// Create handler for Vercel
-const handler = async (req, res) => {
-  // Enable CORS
   await new Promise((resolve, reject) => {
     cors(corsOptions)(req, res, (result) => {
       if (result instanceof Error) {
