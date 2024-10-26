@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+  console.log("Script initialized");
+
   const consoleElement = document.getElementById('game-output');
   const inputElement = document.getElementById('game-input');
   let history = [];
@@ -16,10 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // Text-to-speech function
   function speakText(text) {
     if ('speechSynthesis' in window) {
+      console.log("Starting text-to-speech");
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'en-US';
-      utterance.rate = 1; // Adjust speaking rate if needed
-      utterance.pitch = 1; // Adjust pitch if needed
+      utterance.rate = 1;
+      utterance.pitch = 1;
       window.speechSynthesis.speak(utterance);
     } else {
       console.warn("Text-to-speech not supported in this browser.");
@@ -29,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Voice recognition setup
   let recognition;
   if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+    console.log("Setting up speech recognition");
     recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
     recognition.lang = 'en-US';
     recognition.interimResults = false;
@@ -47,17 +51,19 @@ document.addEventListener('DOMContentLoaded', () => {
     console.warn("Speech recognition not supported in this browser.");
   }
 
-  function startListening() {
+  // Ensure startListening is globally accessible
+  window.startListening = function () {
     if (recognition) {
       recognition.start();
       appendToConsole("Listening for voice input...");
     } else {
       appendToConsole("Voice input not supported on this device.");
     }
-  }
+  };
 
   // Existing sendInput function with added text-to-speech call
   async function sendInput(input) {
+    console.log("Sending input:", input);
     appendToConsole(`<strong>> ${input}</strong>`);
     history.push({ role: 'user', content: input });
 
@@ -90,6 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function checkHealth() {
     try {
+      console.log("Checking server health...");
       const response = await fetch(`${BASE_URL}/api/health`, { method: 'GET', headers: { 'Accept': 'application/json' }, mode: 'cors' });
       if (!response.ok) throw new Error(`Health check failed: ${response.status}`);
       const data = await response.json();
