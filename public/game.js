@@ -13,6 +13,19 @@ document.addEventListener('DOMContentLoaded', () => {
     consoleElement.scrollTop = consoleElement.scrollHeight;
   }
 
+  // Text-to-speech function
+  function speakText(text) {
+    if ('speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US';
+      utterance.rate = 1; // Adjust speaking rate if needed
+      utterance.pitch = 1; // Adjust pitch if needed
+      window.speechSynthesis.speak(utterance);
+    } else {
+      console.warn("Text-to-speech not supported in this browser.");
+    }
+  }
+
   // Voice recognition setup
   let recognition;
   if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
@@ -43,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Existing sendInput function
+  // Existing sendInput function with added text-to-speech call
   async function sendInput(input) {
     appendToConsole(`<strong>> ${input}</strong>`);
     history.push({ role: 'user', content: input });
@@ -65,6 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (data.response) {
         appendToConsole(data.response);
         history.push({ role: 'assistant', content: data.response });
+        speakText(data.response); // Speak the response out loud
       } else {
         appendToConsole('Error: ' + data.error);
       }
