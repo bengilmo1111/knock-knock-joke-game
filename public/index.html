@@ -62,27 +62,22 @@
         #input-container {
             display: flex;
             align-items: center;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 5px;
+            background-color: #222;
         }
 
         /* Styling for input field, voice, and toggle buttons */
-        #game-input,
-        #voice-button,
-        #speech-toggle {
-            border: 1px solid #333;
-            background-color: #222;
-            color: white;
-            font-size: 1em;
-            padding: 12px;
-            font-family: 'Courier New', monospace;
-            outline: none;
-            transition: border-color 0.3s ease;
-            border-radius: 4px;
-        }
-
         #game-input {
             width: 100%;
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 0;
+            border: none;
+            padding: 12px;
+            font-size: 1em;
+            background-color: #222;
+            color: white;
+            outline: none;
+            font-family: 'Courier New', monospace;
         }
 
         #voice-button,
@@ -90,12 +85,16 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 0 15px;
+            background: none;
+            border: none;
+            color: white;
             cursor: pointer;
-            margin-left: -1px;
-            border-top-left-radius: 0;
-            border-bottom-left-radius: 0;
-            border-color: #333;
+            padding: 8px;
+            font-size: 1.2em;
+            margin-left: 5px;
+            outline: none;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
         }
 
         #voice-button:hover,
@@ -103,14 +102,11 @@
             background-color: #444;
         }
 
-        #speech-toggle {
-            border-top-right-radius: 4px;
-            border-bottom-right-radius: 4px;
-            margin-left: -1px;
+        #speech-toggle.on {
+            background-color: #666;
         }
 
         #game-input:focus, #voice-button:focus, #speech-toggle:focus {
-            border-color: #666;
             box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
         }
 
@@ -145,7 +141,7 @@
                 spellcheck="false"
             />
             <button id="voice-button" onclick="startListening()">🎤</button>
-            <button id="speech-toggle" onclick="toggleSpeech()">🔊 Speech Off</button>
+            <button id="speech-toggle" onclick="toggleSpeech()">🔊</button>
         </div>
     </div>
 </body>
