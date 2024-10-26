@@ -1,11 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-const cohere = require('cohere-ai');
 require('dotenv').config();
-const fetch = require('node-fetch'); // Use fetch for HTTP requests if cohere SDK is not compatible
-
-// Initialize Cohere API client
-cohere.init(process.env.COHERE_API_KEY);
+const fetch = require('node-fetch'); // Import fetch for direct HTTP requests
 
 // Allowed origins
 const allowedOrigins = ['https://bengilmo1111-github-io.vercel.app'];
@@ -52,8 +48,6 @@ const handler = async (req, res) => {
   if (req.method === 'POST' && req.url === '/api') {
     try {
       const { input, history } = req.body;
-      console.log('Received input:', input);
-      console.log('Received history:', history);
 
       if (!input) {
         return res.status(400).json({ error: 'Input is required' });
@@ -63,7 +57,7 @@ const handler = async (req, res) => {
         return res.status(400).json({ error: 'History must be an array' });
       }
 
-      // Format messages for the Cohere API's required structure
+      // Format messages as required by Cohere's v2 chat endpoint
       const messages = history.map((entry) => ({
         role: entry.role === 'user' ? 'User' : 'Assistant',
         content: entry.content
@@ -72,7 +66,7 @@ const handler = async (req, res) => {
 
       // Prepare payload for Cohere's v2 chat endpoint
       const payload = {
-        model: 'command-r', // or 'command-r-plus' as applicable
+        model: 'command-r', // or 'command-r-plus' if applicable
         messages: messages,
         max_tokens: 150,
         temperature: 0.8,
