@@ -1,12 +1,16 @@
 // api/server.js
-import express from 'express';
-import cors from 'cors';
-import cohere from 'cohere-ai';
-import 'dotenv/config';
+const express = require('express');
+const cors = require('cors');
+const cohere = require('cohere-ai');
+require('dotenv').config();
 
-// Initialize Cohere with your API key
-cohere.init(process.env.COHERE_API_KEY);
-console.log("Cohere API initialized");
+// Ensure Cohere API client loaded and initialize
+if (cohere && cohere.init) {
+  cohere.init(process.env.COHERE_API_KEY);
+  console.log("Cohere API initialized");
+} else {
+  console.error("Cohere API client did not load correctly.");
+}
 
 // Allowed origins
 const allowedOrigins = ['https://bengilmo1111-github-io.vercel.app'];
