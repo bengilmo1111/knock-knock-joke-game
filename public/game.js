@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let history = [];
 
   // Base URL for your API - update this to your actual server URL
-  const BASE_URL = 'https://bengilmo1111-github-f0ldym4tc-ben-gilmores-projects.vercel.app';
+  const BASE_URL = 'https://bengilmo1111-github-io.vercel.app';
 
   function appendToConsole(text) {
     const paragraph = document.createElement('p');
