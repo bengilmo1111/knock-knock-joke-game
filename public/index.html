@@ -88,49 +88,51 @@
       font-family: 'Courier New', monospace;
     }
 
-    #voice-button,
-    #speech-toggle {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: none;
-      border: none;
-      color: white;
-      cursor: pointer;
-      padding: 8px;
-      font-size: 1.2em;
-      margin-left: 5px;
-      outline: none;
-      border-radius: 4px;
-      transition: background-color 0.3s ease;
+  #voice-button,
+  #speech-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 5px; /* Reduced padding */
+    font-size: 1em; /* Reduced font size */
+    width: 36px; /* Fixed width */
+    height: 36px; /* Fixed height */
+    margin-left: 5px;
+    outline: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+
+  #voice-button:hover,
+  #speech-toggle:hover {
+    background-color: #444;
+  }
+
+  #speech-toggle.on {
+    background-color: #666;
+  }
+
+  #game-input:focus, #voice-button:focus, #speech-toggle:focus {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+  }
+
+  /* Responsive design */
+  @media (max-width: 600px) {
+    #game-container {
+      width: 95%;
+      height: 95vh;
+      padding: 10px;
     }
 
-    #voice-button:hover,
-    #speech-toggle:hover {
-      background-color: #444;
+    #game-input {
+      font-size: 16px;
     }
-
-    #speech-toggle.on {
-      background-color: #666;
-    }
-
-    #game-input:focus, #voice-button:focus, #speech-toggle:focus {
-      box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
-    }
-
-    /* Responsive design */
-    @media (max-width: 600px) {
-      #game-container {
-        width: 95%;
-        height: 95vh;
-        padding: 10px;
-      }
-
-      #game-input {
-        font-size: 16px;
-      }
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
   <div id="game-container" role="main">
