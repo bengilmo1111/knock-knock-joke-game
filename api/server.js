@@ -141,12 +141,13 @@ app.post('/generate-image', async (req, res) => {
 
     console.log("Summarized prompt for image generation:", summarizedPrompt);
 
-    // Generate the image using the summarized prompt
+    // Generate the image using the summarized prompt and x-wait-for-model header
     const hfResponse = await fetch(`https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-3-medium-diffusers`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${process.env.HUGGING_FACE_API_KEY}`,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'x-wait-for-model': 'true' // Wait for model to become ready
       },
       body: JSON.stringify({ inputs: summarizedPrompt })
     });
