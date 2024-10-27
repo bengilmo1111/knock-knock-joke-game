@@ -7,7 +7,7 @@ const { Buffer } = require('buffer');
 const app = express();
 app.use(express.json());
 
-const allowedOrigins = ['https://bengilmo1111-github-io.vercel.app'];
+const allowedOrigins = ['https://knock-knock-joke-game-ben-gilmores-projects.vercel.app'];
 
 const corsOptions = {
   origin: (origin, callback) => {
