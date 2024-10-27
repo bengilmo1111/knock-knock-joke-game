@@ -109,7 +109,7 @@ app.post('/generate-image', async (req, res) => {
   try {
     console.log("Generating image with prompt:", prompt); // Debugging line
 
-  const response = await fetch(`https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-3-medium-diffusers`, {
+    const response = await fetch(`https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-3-medium-diffusers`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${process.env.HUGGING_FACE_API_KEY}`,
@@ -118,10 +118,8 @@ app.post('/generate-image', async (req, res) => {
       body: JSON.stringify({
         inputs: prompt,
         parameters: {
-          target_size: {
-            width: 256,
-            height: 256
-          }
+          width: 256,
+          height: 256
         }
       })
     });
