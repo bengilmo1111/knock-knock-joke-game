@@ -16,47 +16,39 @@ document.addEventListener('DOMContentLoaded', () => {
   if (window.speechSynthesis.getVoices().length > 0) loadVoices();
 
   function extractTextFromJson(json) {
+    // If the input is an array, recursively extract text from each item
     if (Array.isArray(json)) {
       return json.map(extractTextFromJson).join(" ");
     }
+    // If the input is an object, look for a "text" key
     if (typeof json === 'object' && json !== null) {
       if (json.text) return json.text;
+      // Recursively search for text in other keys
       return Object.values(json).map(extractTextFromJson).join(" ");
     }
+    // If it’s a string, return as-is
     return typeof json === 'string' ? json : '';
   }
-
+  
   function preprocessTextForMarkdown(text) {
     try {
+      // Attempt to parse the text as JSON
       const parsedJson = JSON.parse(text);
+      // Extract clean text using recursive extraction
       return extractTextFromJson(parsedJson);
     } catch {
+      // If parsing fails, return text with newline conversions only
       return text.replace(/\\n/g, '\n').replace(/\\r/g, '');
     }
   }
-
-  function appendToConsole(text, isUser = false, speak = false) {
+  
+  function appendToConsole(text, speak = false) {
     const paragraph = document.createElement('p');
-    const cleanedText = preprocessTextForMarkdown(text);
-
-    if (isUser) {
-      // Create a strong element for the prefix
-      const prefix = document.createElement('strong');
-      prefix.textContent = '>>> ';
-
-      // Create a text node for the user input
-      const userText = document.createTextNode(cleanedText);
-
-      // Append the prefix and the text node to the paragraph
-      paragraph.appendChild(prefix);
-      paragraph.appendChild(userText);
-    } else {
-      paragraph.textContent = cleanedText;
-    }
-
+    const cleanedText = preprocessTextForMarkdown(text); // Clean and extract text before parsing
+    paragraph.innerHTML = marked.parse(cleanedText); // Use marked to parse Markdown to HTML
     outputElement.appendChild(paragraph);
     outputElement.scrollTop = outputElement.scrollHeight;
-
+  
     if (speechEnabled && speak && voicesLoaded) speakText(cleanedText);
   }
 
@@ -89,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function sendInput(input, isInitial = false) {
     if (!isInitial) {
-      appendToConsole(input, true); // User input with '>>>' prefix
+      appendToConsole(`> ${input}`);
       history.push({ role: 'user', content: input });
     }
 
@@ -101,13 +93,13 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       const textData = await textResponse.json();
       const responseText = textData.response;
-      appendToConsole(responseText, false, true);
+      appendToConsole(responseText, true);
       history.push({ role: 'assistant', content: responseText });
 
       const imageResponse = await fetch('/generate-image', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: `${responseText}` })
+        body: JSON.stringify({ prompt: `${responseText}, 256x256 resolution` })
       });
       const imageData = await imageResponse.json();
       if (imageData.image) appendImage(imageData.image);
@@ -135,6 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     recognition.onresult = (event) => {
       const voiceInput = event.results[0][0].transcript;
+      appendToConsole(`> ${voiceInput}`);
       sendInput(voiceInput);
     };
 
