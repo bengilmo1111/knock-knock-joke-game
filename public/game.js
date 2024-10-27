@@ -1,3 +1,5 @@
+import { marked } from 'marked';
+
 document.addEventListener('DOMContentLoaded', () => {
   const outputElement = document.getElementById('game-output');
   const inputElement = document.getElementById('game-input');
@@ -19,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Append text to game console and optionally speak it
   function appendToConsole(text, speak = false) {
     const paragraph = document.createElement('p');
-    paragraph.innerHTML = text;
+    paragraph.innerHTML = marked.parse(text); // Use marked to parse Markdown into HTML
     outputElement.appendChild(paragraph);
     outputElement.scrollTop = outputElement.scrollHeight;
 
