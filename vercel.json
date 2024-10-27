@@ -21,9 +21,9 @@
       ]
     }
   ],
-  "functions": [{
-    "app/api/**/*": {
+  "functions": {
+    "api/**/*": {
       "maxDuration": 15
     }
-  }]
+  }
 }
