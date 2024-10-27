@@ -1,9 +1,11 @@
 {
   "version": 2,
-  "builds": [
-    { "src": "public/**/*", "use": "@vercel/static" },
-    { "src": "api/**/*.js", "use": "@vercel/node" }
-  ],
+  "functions": {
+    "api/**/*.js": {
+      "memory": 1024,
+      "maxDuration": 15
+    }
+  },
   "rewrites": [
     { "source": "/api", "destination": "/api/server.js" },
     { "source": "/api/(.*)", "destination": "/api/server.js" },
@@ -20,10 +22,5 @@
         { "key": "Access-Control-Allow-Headers", "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version" }
       ]
     }
-  ],
-  "functions": {
-    "api/**/*": {
-      "maxDuration": 15
-    }
-  }
+  ]
 }
