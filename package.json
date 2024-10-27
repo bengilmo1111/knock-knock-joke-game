@@ -1,7 +1,7 @@
 {
-  "name": "text-adventure-game",
+  "name": "knock-knock-game",
   "version": "1.0.0",
-  "description": "A GPT-powered text adventure game",
+  "description": "A LLM knock knock game",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  appendToConsole("<strong>Welcome to the game of destiny. Will you be a hero, or doomed to wander forever? Play on, brave adventurer.</strong>", true);
-  history.push({ role: 'system', content: "Welcome to the game of destiny." });
+  appendToConsole("<strong>Hi is it knock knock time?.</strong>", true);
+  history.push({ role: 'system', content: "I'll tell you a joke." });
   sendInput("start", true);
 });
