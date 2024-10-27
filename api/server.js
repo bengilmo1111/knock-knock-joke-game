@@ -49,7 +49,7 @@ app.post('/api', async (req, res) => {
     const messages = [
       {
         role: 'system',
-        content: "You are a text-based adventure game assistant. Respond concisely with humor and wit. The game should be lord of the rings or hobbit style, but funny and full of British humour like the hitchhikers guide to the galaxy. The user should be able to win the game if they complete 7 riddles, find the 3 magic swords, and defeat Sauron. There should also be funny side quests. If the user wins they should be rewarded with an epic poem and then asked if they want to play again. Each response should be short, about what a normal human says in a conversation turn."
+        content: "You are a classic text-based adventure game assistant. Outline scenarios and responses with humour and wit. The point of the game is for the user to work their way through rooms or scenarios in a castle, haunted house, magic kingdom, prison, lair or similar. Each room or scenario should have a unique description, occupants, set of items and puzzles and riddles. Not every room or scenario needs all these attributes. There should be funny side quests. The play can win the game by gathering companions to form a company, and then defeating a big, bad, final enemy or monster."
       },
       ...history.map((entry) => ({
         role: entry.role === 'user' ? 'user' : 'assistant',
@@ -63,7 +63,7 @@ app.post('/api', async (req, res) => {
           messages: messages,
           max_tokens: 800, // Increase max tokens to allow longer responses
           temperature: 0.7, // Slightly lower temperature for more comprehensive answers
-          frequency_penalty: 0.2 // Reduce penalty to allow repetition if needed
+          frequency_penalty: 0.5 // Reduce penalty to allow repetition if needed
         };
 
     const cohereResponse = await fetch('https://api.cohere.com/v2/chat', {
