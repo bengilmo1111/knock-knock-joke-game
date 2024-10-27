@@ -83,7 +83,6 @@ app.post('/api', async (req, res) => {
       });
     }
 
-    // Use content directly without assuming it's a string
     const responseText = typeof responseData.message.content === 'string' 
       ? responseData.message.content.trim() 
       : JSON.stringify(responseData.message.content);
@@ -158,16 +157,16 @@ app.post('/generate-image', async (req, res) => {
       })
     });
 
-    if (!hfResponse.ok) {
-      const errorText = await hfResponse.text();
+    if (!response.ok) {
+      const errorText = await response.text();
       console.error('Hugging Face API error:', errorText);
-      return res.status(hfResponse.status).json({
+      return res.status(response.status).json({
         error: 'Hugging Face API error',
         details: errorText
       });
     }
 
-    const buffer = await hfResponse.arrayBuffer();
+    const buffer = await response.arrayBuffer();
     const base64Image = Buffer.from(buffer).toString('base64');
     res.json({ image: `data:image/png;base64,${base64Image}` });
 
