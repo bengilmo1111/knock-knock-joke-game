@@ -15,13 +15,35 @@ document.addEventListener('DOMContentLoaded', () => {
   window.speechSynthesis.onvoiceschanged = loadVoices;
   if (window.speechSynthesis.getVoices().length > 0) loadVoices();
 
+  function preprocessTextForMarkdown(text) {
+    // Replace JSON artifacts or other unwanted characters
+    let cleanedText = text;
+  
+    // Replace "\n" and "\r" with actual newlines
+    cleanedText = cleanedText.replace(/\\n/g, '\n').replace(/\\r/g, '');
+  
+    // Optional: Additional preprocessing for JSON-like artifacts if any
+    try {
+      // If text is JSON-like, parse and extract text content
+      const parsedText = JSON.parse(cleanedText);
+      if (parsedText && typeof parsedText === 'object' && parsedText[0]?.text) {
+        cleanedText = parsedText[0].text;
+      }
+    } catch {
+      // Ignore JSON parse errors if text is not JSON
+    }
+  
+    return cleanedText;
+  }
+  
   function appendToConsole(text, speak = false) {
     const paragraph = document.createElement('p');
-    paragraph.innerHTML = marked.parse(text); // Parse Markdown to HTML
+    const cleanedText = preprocessTextForMarkdown(text); // Preprocess before parsing
+    paragraph.innerHTML = marked.parse(cleanedText); // Use marked to parse Markdown to HTML
     outputElement.appendChild(paragraph);
     outputElement.scrollTop = outputElement.scrollHeight;
-
-    if (speechEnabled && speak && voicesLoaded) speakText(text);
+  
+    if (speechEnabled && speak && voicesLoaded) speakText(cleanedText);
   }
 
   function appendImage(base64Image) {
