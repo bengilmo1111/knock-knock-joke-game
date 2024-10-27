@@ -60,7 +60,6 @@ app.post('/api', async (req, res) => {
     max_tokens: 800,
     temperature: 0.7,
     frequency_penalty: 0.5,
-    presence_penalty: 0.5,
     safety_mode: 'CONTEXTUAL'
   };
 
