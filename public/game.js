@@ -76,8 +76,9 @@ document.addEventListener('DOMContentLoaded', () => {
   window.toggleSpeech = function () {
     speechEnabled = !speechEnabled;
     const toggleButton = document.getElementById('speech-toggle');
-    toggleButton.textContent = speechEnabled ? "🔊 Speech On" : "🔊 Speech Off";
-  };
+    
+    toggleButton.textContent = speechEnabled ? "🔊" : "🔇";
+    toggleButton.title = speechEnabled ? "Speech On" : "Speech Off"; // Optional tooltip  };
 
   async function sendInput(input, isInitial = false) {
     if (!isInitial) {
