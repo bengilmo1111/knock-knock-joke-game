@@ -16,29 +16,32 @@ document.addEventListener('DOMContentLoaded', () => {
   if (window.speechSynthesis.getVoices().length > 0) loadVoices();
 
   function preprocessTextForMarkdown(text) {
-    // Replace JSON artifacts or other unwanted characters
-    let cleanedText = text;
-  
     // Replace "\n" and "\r" with actual newlines
-    cleanedText = cleanedText.replace(/\\n/g, '\n').replace(/\\r/g, '');
+    let cleanedText = text.replace(/\\n/g, '\n').replace(/\\r/g, '');
   
-    // Optional: Additional preprocessing for JSON-like artifacts if any
-    try {
-      // If text is JSON-like, parse and extract text content
-      const parsedText = JSON.parse(cleanedText);
-      if (parsedText && typeof parsedText === 'object' && parsedText[0]?.text) {
-        cleanedText = parsedText[0].text;
+    // Remove specific JSON artifacts such as [{"type":"text","text":...}]
+    const jsonPattern = /\[?\{"type":"text","text":(".*?")\}\]?/g;
+  
+    // Match and extract inner text content
+    cleanedText = cleanedText.replace(jsonPattern, (match, p1) => {
+      try {
+        // Parse the JSON text content if it’s a valid JSON string
+        return JSON.parse(p1);
+      } catch {
+        // If parsing fails, return the matched group without JSON structure
+        return p1;
       }
-    } catch {
-      // Ignore JSON parse errors if text is not JSON
-    }
+    });
+  
+    // Remove any remaining JSON-like brackets or double quotes if necessary
+    cleanedText = cleanedText.replace(/^\[|\]$/g, '').replace(/^"|"$/g, '');
   
     return cleanedText;
   }
   
   function appendToConsole(text, speak = false) {
     const paragraph = document.createElement('p');
-    const cleanedText = preprocessTextForMarkdown(text); // Preprocess before parsing
+    const cleanedText = preprocessTextForMarkdown(text); // Clean text before parsing
     paragraph.innerHTML = marked.parse(cleanedText); // Use marked to parse Markdown to HTML
     outputElement.appendChild(paragraph);
     outputElement.scrollTop = outputElement.scrollHeight;
