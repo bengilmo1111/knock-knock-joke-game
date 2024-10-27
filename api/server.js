@@ -59,12 +59,12 @@ app.post('/api', async (req, res) => {
     ];
 
     const payload = {
-      model: 'command-r-plus-08-2024',
-      messages: messages,
-      max_tokens: 150,
-      temperature: 0.8,
-      frequency_penalty: 0.5
-    };
+          model: 'command-r-plus-08-2024',
+          messages: messages,
+          max_tokens: 800, // Increase max tokens to allow longer responses
+          temperature: 0.7, // Slightly lower temperature for more comprehensive answers
+          frequency_penalty: 0.2 // Reduce penalty to allow repetition if needed
+        };
 
     const cohereResponse = await fetch('https://api.cohere.com/v2/chat', {
       method: 'POST',
