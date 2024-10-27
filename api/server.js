@@ -60,6 +60,7 @@ app.post('/api', async (req, res) => {
     max_tokens: 800,
     temperature: 0.7,
     frequency_penalty: 0.5,
+    presence_penalty: 0.5,
     safety_mode: 'CONTEXTUAL'
   };
 
@@ -75,7 +76,7 @@ app.post('/api', async (req, res) => {
 
     const responseData = await cohereResponse.json();
 
-    if (!cohereResponse.ok || !responseData.message) {
+    if (!cohereResponse.ok || !responseData.message || !responseData.message.content) {
       console.error('Cohere API error:', responseData);
       return res.status(cohereResponse.status).json({
         error: 'Cohere API error',
@@ -83,7 +84,11 @@ app.post('/api', async (req, res) => {
       });
     }
 
-    const responseText = responseData.message.content.trim();
+    // Use content directly without assuming it's a string
+    const responseText = typeof responseData.message.content === 'string' 
+      ? responseData.message.content.trim() 
+      : JSON.stringify(responseData.message.content);
+
     res.json({ response: responseText });
 
   } catch (error) {
@@ -123,7 +128,7 @@ app.post('/generate-image', async (req, res) => {
     });
 
     const cohereSummaryData = await cohereSummaryResponse.json();
-    if (!cohereSummaryResponse.ok || !cohereSummaryData.message) {
+    if (!cohereSummaryResponse.ok || !cohereSummaryData.message || !cohereSummaryData.message.content) {
       console.error("Cohere summarization error:", cohereSummaryData);
       return res.status(cohereSummaryResponse.status).json({
         error: 'Cohere summarization error',
@@ -131,7 +136,10 @@ app.post('/generate-image', async (req, res) => {
       });
     }
 
-    const summarizedPrompt = cohereSummaryData.message.content.trim();
+    const summarizedPrompt = typeof cohereSummaryData.message.content === 'string'
+      ? cohereSummaryData.message.content.trim()
+      : JSON.stringify(cohereSummaryData.message.content);
+
     console.log("Summarized prompt for image generation:", summarizedPrompt);
 
     // Generate the image using the summarized prompt
