@@ -1,149 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <meta name="description" content="Choose Your Destiny - An interactive text adventure game">
-    <title>Choose Your Destiny</title>
-    <script type="text/javascript" src="game.js"></script>
-    <style>
-        body {
-            background-color: black;
-            color: white;
-            font-family: 'Courier New', monospace;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            line-height: 1.6;
-        }
-
-        #game-container {
-            width: 90%;
-            max-width: 800px;
-            border: 1px solid #444;
-            border-radius: 4px;
-            padding: 20px;
-            height: 90vh;
-            display: flex;
-            flex-direction: column;
-            background-color: rgba(0, 0, 0, 0.8);
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
-        }
-
-        #game-output {
-            flex: 1;
-            padding: 15px;
-            overflow-y: auto;
-            margin-bottom: 10px;
-            scrollbar-width: thin;
-            scrollbar-color: #444 #222;
-        }
-
-        #game-output::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        #game-output::-webkit-scrollbar-track {
-            background: #222;
-        }
-
-        #game-output::-webkit-scrollbar-thumb {
-            background-color: #444;
-            border-radius: 4px;
-        }
-
-        #game-output p {
-            margin: 0.5em 0;
-            word-wrap: break-word;
-        }
-
-        #input-container {
-            display: flex;
-            align-items: center;
-            border: 1px solid #333;
-            border-radius: 4px;
-            padding: 5px;
-            background-color: #222;
-        }
-
-        /* Styling for input field, voice, and toggle buttons */
-        #game-input {
-            width: 100%;
-            border: none;
-            padding: 12px;
-            font-size: 1em;
-            background-color: #222;
-            color: white;
-            outline: none;
-            font-family: 'Courier New', monospace;
-        }
-
-        #voice-button,
-        #speech-toggle {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            padding: 8px;
-            font-size: 1.2em;
-            margin-left: 5px;
-            outline: none;
-            border-radius: 4px;
-            transition: background-color 0.3s ease;
-        }
-
-        #voice-button:hover,
-        #speech-toggle:hover {
-            background-color: #444;
-        }
-
-        #speech-toggle.on {
-            background-color: #666;
-        }
-
-        #game-input:focus, #voice-button:focus, #speech-toggle:focus {
-            box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
-        }
-
-        /* Responsive design */
-        @media (max-width: 600px) {
-            #game-container {
-                width: 95%;
-                height: 95vh;
-                padding: 10px;
-            }
-
-            #game-input {
-                font-size: 16px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Choose Your Destiny</title>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      font-family: 'Courier New', monospace;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      flex-direction: column;
+    }
+    #game-container {
+      width: 90%;
+      max-width: 800px;
+      border: 1px solid #444;
+      border-radius: 4px;
+      padding: 20px;
+      background-color: rgba(0, 0, 0, 0.8);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 1em;
+    }
+    #game-output {
+      flex: 1;
+      overflow-y: auto;
+    }
+    #game-output p {
+      margin: 0.5em 0;
+      word-wrap: break-word;
+    }
+    #game-image {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+      margin-top: 1em;
+    }
+    #game-input {
+      width: 100%;
+      border: 1px solid #333;
+      border-radius: 4px;
+      padding: 12px;
+      font-size: 1em;
+      background-color: #222;
+      color: white;
+      outline: none;
+      margin-top: 1em;
+    }
+  </style>
 </head>
 <body>
-    <div id="game-container" role="main">
-        <!-- Game output area -->
-        <div id="game-output" role="log" aria-live="polite"></div>
-        
-        <!-- Input and Voice Button Container -->
-        <div id="input-container">
-            <input 
-                type="text" 
-                id="game-input" 
-                placeholder="Enter your command..." 
-                aria-label="Game command input"
-                autocomplete="off" 
-                autofocus 
-                spellcheck="false"
-            />
-            <button id="voice-button" onclick="startListening()">🎤</button>
-            <button id="speech-toggle" onclick="toggleSpeech()">🔊</button>
-        </div>
-    </div>
+  <div id="game-container">
+    <div id="game-output"></div>
+    <img id="game-image" alt="Scene Image" style="display:none;" />
+    <input type="text" id="game-input" placeholder="Enter your command..." />
+  </div>
+  <script src="game.js"></script>
 </body>
 </html>

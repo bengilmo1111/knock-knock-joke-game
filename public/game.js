@@ -1,172 +1,61 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const consoleElement = document.getElementById('game-output');
+  const outputElement = document.getElementById('game-output');
   const inputElement = document.getElementById('game-input');
+  const imageElement = document.getElementById('game-image');
   let history = [];
-  let selectedVoice;
-  let voicesLoaded = false;
 
-  // Function to load voices and select "Google UK English Male" if available
-  function loadVoices() {
-    const voices = window.speechSynthesis.getVoices();
-    selectedVoice = voices.find(voice => voice.name === 'Google UK English Male') || voices[0]; // Default to first available voice if not found
-    voicesLoaded = true;
-    console.log("Selected voice:", selectedVoice);
-  }
-
-  // Ensure voices are loaded and available on Chrome Desktop
-  window.speechSynthesis.onvoiceschanged = () => {
-    loadVoices();
-    // Trigger a call to `speakText` to verify sound if needed (optional)
-  };
-
-  // If voices are already loaded, load them immediately
-  if (window.speechSynthesis.getVoices().length > 0) {
-    loadVoices();
-  }
-
-  // Base URL for your API
-  const BASE_URL = 'https://bengilmo1111-github-io.vercel.app';
-
-  // Initial title and intro message
-  const introMessage = "Welcome to the game of destiny. Will you be a hero, or doomed to wander forever? Play on, brave adventurer.";
-
-  // Append text to game console and optionally speak it
-  function appendToConsole(text, speak = false) {
+  function appendToConsole(text) {
     const paragraph = document.createElement('p');
-    paragraph.innerHTML = text;
-    consoleElement.appendChild(paragraph);
-    consoleElement.scrollTop = consoleElement.scrollHeight;
-
-    // Use text-to-speech if enabled and requested
-    if (speechEnabled && speak) {
-      if (voicesLoaded) {
-        speakText(text);
-      } else {
-        setTimeout(() => speakText(text), 100); // Delay to allow voice loading
-      }
-    }
+    paragraph.innerText = text;
+    outputElement.appendChild(paragraph);
+    outputElement.scrollTop = outputElement.scrollHeight;
   }
 
-  function speakText(text) {
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.voice = selectedVoice; // Use the selected voice
-      utterance.lang = 'en-GB'; // Set language to British English
-      utterance.rate = 1; // Set speaking rate
-      utterance.pitch = 1; // Set pitch
-      window.speechSynthesis.speak(utterance); // Speak the text with the selected voice
-    } else {
-      console.warn("Text-to-speech not supported in this browser.");
-    }
-  }
-
-  // Toggle speech output on and off
-  let speechEnabled = false;
-  window.toggleSpeech = function () {
-    speechEnabled = !speechEnabled;
-    const toggleButton = document.getElementById('speech-toggle');
-    toggleButton.textContent = speechEnabled ? "🔊 Speech On" : "🔊 Speech Off";
-    toggleButton.classList.toggle('on', speechEnabled);
-  };
-
-  // Display intro message and initiate first Cohere response
-  function startGame() {
-    appendToConsole(`<strong>${introMessage}</strong>`, true);
-
-    // Add the intro message to history and send initial request to Cohere
-    history.push({ role: 'system', content: introMessage });
-    sendInput("start", true); // Set `true` for initial request so it doesn't wait for user input
-  }
-
-  // Modified sendInput to handle both user and initial Cohere requests
-  async function sendInput(input, isInitial = false) {
-    if (!isInitial) {
-      appendToConsole(`<strong>> ${input}</strong>`, false);
-      history.push({ role: 'user', content: input });
-    }
+  async function sendInput(input) {
+    appendToConsole(`> ${input}`);
+    history.push({ role: 'user', content: input });
 
     try {
-      const isHealthy = await checkHealth();
-      if (!isHealthy) throw new Error('Server health check failed');
-      
-      const response = await fetch(`${BASE_URL}/api`, {
+      // Call the /api endpoint to get text response
+      const textResponse = await fetch('/api', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        mode: 'cors',
-        body: JSON.stringify({ input, history }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ input, history })
       });
+      const textData = await textResponse.json();
+      const responseText = textData.response;
+      appendToConsole(responseText);
 
-      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      // Add the assistant response to history
+      history.push({ role: 'assistant', content: responseText });
 
-      const data = await response.json();
-      if (data.response) {
-        appendToConsole(data.response, true);
-        history.push({ role: 'assistant', content: data.response });
+      // Call the /generate-image endpoint to get image based on text
+      const imageResponse = await fetch('/generate-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: responseText })
+      });
+      const imageData = await imageResponse.json();
 
-        // If this is the initial request, set up for the user’s turn
-        if (isInitial) {
-          inputElement.focus();
-        }
-      } else {
-        appendToConsole('Error: ' + data.error);
+      if (imageData.image) {
+        imageElement.src = imageData.image;
+        imageElement.style.display = 'block';
       }
+
     } catch (error) {
-      console.error("Fetch error:", error);
-      appendToConsole('An error occurred while connecting to the server. Please try again.');
+      console.error("Error processing input:", error);
+      appendToConsole("An error occurred. Please try again.");
     }
   }
 
-  async function checkHealth() {
-    try {
-      const response = await fetch(`${BASE_URL}/api/health`, { method: 'GET', headers: { 'Accept': 'application/json' }, mode: 'cors' });
-      if (!response.ok) throw new Error(`Health check failed: ${response.status}`);
-      const data = await response.json();
-      return data.status === 'ok';
-    } catch (error) {
-      console.error('Health check failed:', error);
-      return false;
-    }
-  }
-
-  // Handle Enter key in the input field for keyboard input
   inputElement.addEventListener('keydown', (event) => {
     if (event.key === 'Enter' && inputElement.value.trim() !== '') {
       const userInput = inputElement.value.trim();
-      inputElement.value = ''; // Clear the input field
-      sendInput(userInput); // Send the user input to the game
+      inputElement.value = '';
+      sendInput(userInput);
     }
   });
 
-  // Start the game on page load with the intro and Cohere response
-  startGame();
-
-  // Voice recognition setup (preserves existing voice input functionality)
-  let recognition;
-  if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
-    recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.lang = 'en-US';
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-
-    recognition.onresult = (event) => {
-      const voiceInput = event.results[0][0].transcript;
-      appendToConsole(`<strong>> ${voiceInput}</strong>`);
-      sendInput(voiceInput);
-    };
-
-    recognition.onerror = (event) => {
-      appendToConsole("Error with voice input: " + event.error);
-    };
-  } else {
-    console.warn("Speech recognition not supported in this browser.");
-  }
-
-  window.startListening = function () {
-    if (recognition) {
-      recognition.start();
-      appendToConsole("Listening for voice input...");
-    } else {
-      appendToConsole("Voice input not supported on this device.");
-    }
-  };
+  // Initial game start
+  sendInput("start");
 });
