@@ -30,6 +30,14 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// Helper function to flatten the response content from Cohere
+function flattenResponse(responseContent) {
+  if (Array.isArray(responseContent)) {
+    return responseContent.map(item => item.text || '').join(' ');
+  }
+  return responseContent || '';
+}
+
 // Main game endpoint for Cohere API
 app.post('/api', async (req, res) => {
   const { input, history } = req.body;
@@ -44,7 +52,7 @@ app.post('/api', async (req, res) => {
 
   const systemMessage = {
     role: 'system',
-    content: "You are a classic text-based adventure game assistant. You will create child friendly scenarios and responses. Outline scenarios and responses with humour and wit. The player progresses through rooms and settings in a castle or funny, haunted house or magic kingdom or lair, or similar epic location, each with unique descriptions, items, and occasional puzzles or riddles. Add funny side quests. To win, the player forms a company to defeat a final enemy. Do not output JSON structures as part of the output, markdown is okay however."
+    content: "You are a classic text-based adventure game assistant. You will create child-friendly scenarios and responses. Outline scenarios and responses with humour and wit. The player progresses through rooms and settings in a castle, funny haunted house, magic kingdom, or lair, each with unique descriptions, items, and occasional puzzles or riddles. Add funny side quests. To win, the player forms a company to defeat a final enemy. Apart from the first message, keep descriptions and messages to the user short and concise."
   };
 
   const messages = [
@@ -86,10 +94,7 @@ app.post('/api', async (req, res) => {
       });
     }
 
-    const responseText = typeof responseData.message.content === 'string' 
-      ? responseData.message.content.trim() 
-      : JSON.stringify(responseData.message.content);
-
+    const responseText = flattenResponse(responseData.message.content);  // Flatten nested JSON content
     res.json({ response: responseText });
 
   } catch (error) {
@@ -137,9 +142,7 @@ app.post('/generate-image', async (req, res) => {
       });
     }
 
-    const summarizedPrompt = typeof cohereSummaryData.message.content === 'string'
-      ? cohereSummaryData.message.content.trim()
-      : JSON.stringify(cohereSummaryData.message.content);
+    const summarizedPrompt = flattenResponse(cohereSummaryData.message.content);
 
     console.log("Summarized prompt for image generation:", summarizedPrompt);
 
