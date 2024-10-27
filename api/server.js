@@ -149,7 +149,11 @@ app.post('/generate-image', async (req, res) => {
         'Content-Type': 'application/json',
         'x-wait-for-model': 'true' // Wait for model to become ready
       },
-      body: JSON.stringify({ inputs: summarizedPrompt })
+      body: JSON.stringify({ inputs: summarizedPrompt }), 
+        parameters: {
+          width: 256,
+          height: 256
+      }
     });
 
     if (!hfResponse.ok) {
