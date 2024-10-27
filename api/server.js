@@ -114,7 +114,7 @@ app.post('/generate-image', async (req, res) => {
     console.log("Generating image with prompt:", prompt); // Debugging line
 
     // Call Hugging Face API for Stable Diffusion
-    const response = await fetch(`https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2`, {
+    const response = await fetch(`https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2-1-base`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${process.env.HUGGING_FACE_API_KEY}`,
