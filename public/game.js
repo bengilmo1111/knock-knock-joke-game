@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  appendToConsole("<strong>Hi is it knock knock time?.</strong>", true);
+  appendToConsole("<strong>Hi is it knock knock time?</strong>", true);
   history.push({ role: 'system', content: "I'll tell you a joke." });
   sendInput("start", true);
 });
