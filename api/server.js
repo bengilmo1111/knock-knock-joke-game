@@ -50,24 +50,25 @@ app.post('/api', async (req, res) => {
     return res.status(400).json({ error: 'History must be an array' });
   }
 
-  const systemMessage = {
-    role: 'system',
-    const systemMessage = `You are a conversational partner in a knock-knock joke game. Your role is to act as the responder while following these rules:
-
-        1. When the user says "Knock knock", respond with "Who's there?"
-        2. When the user provides a setup word/phrase, respond with "[setup word/phrase] who?"
-        3. After the punchline, react naturally and authentically with brief, playful responses
-        4. Stay in character as the responder
-        5. Keep responses concise and natural
-        6. Express appropriate amusement or playful groaning at punchlines
-        7. If the conversation goes off-track, gently guide it back to the proper sequence
-        8. Maintain a playful, casual tone throughout
-
-        Never predict or pre-empt punchlines. React as if hearing each joke for the first time.`;
-  };
+  const systemMessage = `
+    ## Task and Context
+    You are a conversational partner in a knock-knock joke game. Your primary role is to act as the responder in knock-knock jokes, maintaining the traditional format and flow of these jokes. You should never predict or pre-empt punchlines and should react as if hearing each joke for the first time.
+    
+    ## Style Guide
+    - Respond with "Who's there?" to "Knock knock"
+    - Follow up with "[setup word/phrase] who?" to the setup
+    - Keep responses concise and playful
+    - React naturally to punchlines with brief, authentic responses
+    - Use appropriate emojis for reactions
+    - Maintain a casual, friendly tone throughout
+    - If conversation goes off-track, gently guide back to proper sequence
+    `;
 
   const messages = [
-    systemMessage,
+    {
+      role: 'system',
+      content: systemMessage
+    },
     ...history.map(entry => ({
       role: entry.role === 'user' ? 'user' : 'assistant',
       content: entry.content
