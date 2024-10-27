@@ -35,10 +35,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function appendToConsole(text, isUser = false, speak = false) {
+  function appendToConsole(text, speak = false) {
     const paragraph = document.createElement('p');
     const cleanedText = preprocessTextForMarkdown(text);
-    paragraph.innerHTML = isUser ? `>>> ${marked.parse(cleanedText)}` : marked.parse(cleanedText);
+    paragraph.innerHTML = marked.parse(cleanedText);
     outputElement.appendChild(paragraph);
     outputElement.scrollTop = outputElement.scrollHeight;
 
@@ -69,14 +69,13 @@ document.addEventListener('DOMContentLoaded', () => {
   window.toggleSpeech = function () {
     speechEnabled = !speechEnabled;
     const toggleButton = document.getElementById('speech-toggle');
-    
     toggleButton.textContent = speechEnabled ? "🔊" : "🔇";
-    toggleButton.title = speechEnabled ? "Speech On" : "Speech Off"; // Optional tooltip
+    toggleButton.title = speechEnabled ? "Speech On" : "Speech Off";
   };
 
   async function sendInput(input, isInitial = false) {
     if (!isInitial) {
-      appendToConsole(input, true); // User input with '>>>'
+      appendToConsole(input);
       history.push({ role: 'user', content: input });
     }
 
@@ -88,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       const textData = await textResponse.json();
       const responseText = textData.response;
-      appendToConsole(responseText, false, true);
+      appendToConsole(responseText, true);
       history.push({ role: 'assistant', content: responseText });
 
       const imageResponse = await fetch('/generate-image', {
@@ -122,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     recognition.onresult = (event) => {
       const voiceInput = event.results[0][0].transcript;
-      appendToConsole(`>>> ${voiceInput}`);
+      appendToConsole(voiceInput);
       sendInput(voiceInput);
     };
 
