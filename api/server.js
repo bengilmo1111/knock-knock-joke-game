@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const fetch = require('node-fetch'); // Use fetch for HTTP requests
+const fetch = require('node-fetch');
 
 const app = express();
 app.use(express.json());
@@ -14,6 +14,7 @@ const corsOptions = {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
+      console.log('Blocked by CORS:', origin); // Debugging line
       callback(new Error('Not allowed by CORS'));
     }
   },
@@ -24,6 +25,7 @@ const corsOptions = {
 
 // Apply CORS middleware
 app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // Handle preflight requests for all routes
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -47,7 +49,7 @@ app.post('/api', async (req, res) => {
     const messages = [
       {
         role: 'system',
-        content: "You are a text-based adventure game assistant. Respond concisely with humor and wit. The game should be lord of the rings or hobbit style, but funny and full of British humour like the hitchhikers guide to the galaxy. The user should be able to win the game if they complete 7 riddles, find the 3 magic swords, and defeat Sauron. There should also be funny side quests. If the user wins they should be rewarded with an epic poem and then asked if they want to play again. Each response should be short, about what a normal human says in a conversation turn. You do not need to offer a riddle with each scene, instead offer other types of adventures, monsters, quests and puzzles."
+        content: "You are a text-based adventure game assistant. Respond concisely with humor and wit. The game should be lord of the rings or hobbit style, but funny and full of British humour like the hitchhikers guide to the galaxy. The user should be able to win the game if they complete 7 riddles, find the 3 magic swords, and defeat Sauron. There should also be funny side quests. If the user wins they should be rewarded with an epic poem and then asked if they want to play again. Each response should be short, about what a normal human says in a conversation turn."
       },
       ...history.map((entry) => ({
         role: entry.role === 'user' ? 'user' : 'assistant',
@@ -109,8 +111,10 @@ app.post('/generate-image', async (req, res) => {
   }
 
   try {
+    console.log("Generating image with prompt:", prompt); // Debugging line
+
     // Call Hugging Face API for Stable Diffusion
-    const response = await fetch(`https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-3.5-large-turbo`, {
+    const response = await fetch(`https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${process.env.HUGGING_FACE_API_KEY}`,
@@ -133,6 +137,7 @@ app.post('/generate-image', async (req, res) => {
     const imageBase64 = imageResponse[0]?.data; // Ensure correct response structure
 
     if (!imageBase64) {
+      console.error('No image data returned from Hugging Face');
       return res.status(500).json({ error: "Image generation failed: no data returned" });
     }
 
