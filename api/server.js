@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const fetch = require('node-fetch');
+const { Buffer } = require('buffer'); // Import Buffer for binary-to-base64 conversion
 
 const app = express();
 app.use(express.json());
@@ -45,7 +46,6 @@ app.post('/api', async (req, res) => {
       return res.status(400).json({ error: 'History must be an array' });
     }
 
-    // Format messages for Cohere's chat endpoint
     const messages = [
       {
         role: 'system',
@@ -58,7 +58,6 @@ app.post('/api', async (req, res) => {
       { role: 'user', content: input }
     ];
 
-    // Prepare payload for Cohere API
     const payload = {
       model: 'command-r-plus-08-2024',
       messages: messages,
@@ -67,7 +66,6 @@ app.post('/api', async (req, res) => {
       frequency_penalty: 0.5
     };
 
-    // Call Cohere API
     const cohereResponse = await fetch('https://api.cohere.com/v2/chat', {
       method: 'POST',
       headers: {
@@ -87,10 +85,8 @@ app.post('/api', async (req, res) => {
       });
     }
 
-    // Extract the assistant's response
     const responseText = responseData.message.content[0].text;
 
-    // Send the text response from Cohere back to the client
     res.json({ response: responseText });
 
   } catch (error) {
@@ -113,7 +109,6 @@ app.post('/generate-image', async (req, res) => {
   try {
     console.log("Generating image with prompt:", prompt); // Debugging line
 
-    // Call Hugging Face API for Stable Diffusion
     const response = await fetch(`https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2-1-base`, {
       method: 'POST',
       headers: {
@@ -123,26 +118,21 @@ app.post('/generate-image', async (req, res) => {
       body: JSON.stringify({ inputs: prompt })
     });
 
-    const imageResponse = await response.json();
-
     if (!response.ok) {
-      console.error('Hugging Face API error:', imageResponse);
+      const errorText = await response.text();
+      console.error('Hugging Face API error:', errorText);
       return res.status(response.status).json({
         error: 'Hugging Face API error',
-        details: imageResponse
+        details: errorText
       });
     }
 
-    // The response should include the image data in base64 format
-    const imageBase64 = imageResponse[0]?.data; // Ensure correct response structure
-
-    if (!imageBase64) {
-      console.error('No image data returned from Hugging Face');
-      return res.status(500).json({ error: "Image generation failed: no data returned" });
-    }
+    // Handle binary response from Hugging Face
+    const buffer = await response.arrayBuffer();
+    const base64Image = Buffer.from(buffer).toString('base64');
 
     // Send back the base64 image
-    res.json({ image: `data:image/png;base64,${imageBase64}` });
+    res.json({ image: `data:image/png;base64,${base64Image}` });
 
   } catch (error) {
     console.error("Error generating image:", error);
