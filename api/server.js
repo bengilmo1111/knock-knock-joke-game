@@ -141,20 +141,21 @@ app.post('/generate-image', async (req, res) => {
 
     console.log("Summarized prompt for image generation:", summarizedPrompt);
 
-    // Generate the image using the summarized prompt and x-wait-for-model header
-    const hfResponse = await fetch(`https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-3-medium-diffusers`, {
+    const response = await fetch(`https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-3-medium-diffusers`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${process.env.HUGGING_FACE_API_KEY}`,
         'Content-Type': 'application/json',
-        'x-wait-for-model': 'true' // Wait for model to become ready
+        'x-wait-for-model': 'true'
       },
-      body: JSON.stringify({ inputs: summarizedPrompt }), 
+      body: JSON.stringify({
+        inputs: `${summarizedPrompt}, Generate in a kid friendly, comic style, vibrant colors`,
         parameters: {
           width: 256,
           height: 256,
-          style_preset: comic-book
-      }
+          negative_prompt: "blurry, bad quality, ugly, realistic, photographic, scary, dark"
+        }
+      })
     });
 
     if (!hfResponse.ok) {
