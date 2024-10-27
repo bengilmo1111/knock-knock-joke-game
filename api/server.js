@@ -115,7 +115,7 @@ app.post('/generate-image', async (req, res) => {
         Authorization: `Bearer ${process.env.HUGGING_FACE_API_KEY}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ inputs: prompt })
+      body: JSON.stringify({ inputs: `${prompt}, 256x256 resolution` })
     });
 
     if (!response.ok) {

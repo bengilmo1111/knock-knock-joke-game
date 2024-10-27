@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   const outputElement = document.getElementById('game-output');
   const inputElement = document.getElementById('game-input');
-  const imageElement = document.getElementById('game-image');
   let history = [];
 
   function appendToConsole(text) {
@@ -11,12 +10,22 @@ document.addEventListener('DOMContentLoaded', () => {
     outputElement.scrollTop = outputElement.scrollHeight;
   }
 
+  function appendImage(base64Image) {
+    const img = document.createElement('img');
+    img.src = base64Image;
+    img.alt = "Game Image";
+    img.style.maxWidth = '100%';
+    img.style.height = 'auto';
+    outputElement.appendChild(img);
+    outputElement.scrollTop = outputElement.scrollHeight;
+  }
+
   async function sendInput(input) {
     appendToConsole(`> ${input}`);
     history.push({ role: 'user', content: input });
 
     try {
-      // Call the /api endpoint to get text response
+      // Get text response from the game API
       const textResponse = await fetch('/api', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -26,21 +35,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const responseText = textData.response;
       appendToConsole(responseText);
 
-      // Add the assistant response to history
       history.push({ role: 'assistant', content: responseText });
 
-      // Call the /generate-image endpoint to get image based on text
+      // Get image based on text response, with smaller resolution hint
       const imageResponse = await fetch('/generate-image', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: responseText })
+        body: JSON.stringify({ prompt: `${responseText}, 256x256 resolution` })
       });
       const imageData = await imageResponse.json();
-
-      if (imageData.image) {
-        imageElement.src = imageData.image;
-        imageElement.style.display = 'block';
-      }
+      if (imageData.image) appendImage(imageData.image);
 
     } catch (error) {
       console.error("Error processing input:", error);
@@ -56,6 +60,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Initial game start
   sendInput("start");
 });
