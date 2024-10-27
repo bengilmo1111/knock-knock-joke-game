@@ -1,14 +1,11 @@
-import { marked } from 'marked';
-
 document.addEventListener('DOMContentLoaded', () => {
   const outputElement = document.getElementById('game-output');
   const inputElement = document.getElementById('game-input');
   let history = [];
   let selectedVoice;
   let voicesLoaded = false;
-  let speechEnabled = false; // Toggle for speech output
+  let speechEnabled = false;
 
-  // Function to load voices and select "Google UK English Male" if available
   function loadVoices() {
     const voices = window.speechSynthesis.getVoices();
     selectedVoice = voices.find(voice => voice.name === 'Google UK English Male') || voices[0];
@@ -18,10 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
   window.speechSynthesis.onvoiceschanged = loadVoices;
   if (window.speechSynthesis.getVoices().length > 0) loadVoices();
 
-  // Append text to game console and optionally speak it
   function appendToConsole(text, speak = false) {
     const paragraph = document.createElement('p');
-    paragraph.innerHTML = marked.parse(text); // Use marked to parse Markdown into HTML
+    paragraph.innerHTML = marked.parse(text); // Parse Markdown to HTML
     outputElement.appendChild(paragraph);
     outputElement.scrollTop = outputElement.scrollHeight;
 
@@ -49,7 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Toggle speech output on and off
   window.toggleSpeech = function () {
     speechEnabled = !speechEnabled;
     const toggleButton = document.getElementById('speech-toggle');
@@ -63,7 +58,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
-      // Get text response from the game API
       const textResponse = await fetch('/api', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -71,10 +65,9 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       const textData = await textResponse.json();
       const responseText = textData.response;
-      appendToConsole(responseText, true); // Speak the game response
+      appendToConsole(responseText, true);
       history.push({ role: 'assistant', content: responseText });
 
-      // Get image based on text response
       const imageResponse = await fetch('/generate-image', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -89,7 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Handle Enter key for keyboard input
   inputElement.addEventListener('keydown', (event) => {
     if (event.key === 'Enter' && inputElement.value.trim() !== '') {
       const userInput = inputElement.value.trim();
@@ -98,7 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Voice recognition setup
   let recognition;
   if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
     recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
@@ -119,7 +110,6 @@ document.addEventListener('DOMContentLoaded', () => {
     console.warn("Speech recognition not supported in this browser.");
   }
 
-  // Start listening for voice input
   window.startListening = function () {
     if (recognition) {
       recognition.start();
@@ -129,8 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Start the game with the introductory message
   appendToConsole("<strong>Welcome to the game of destiny. Will you be a hero, or doomed to wander forever? Play on, brave adventurer.</strong>", true);
   history.push({ role: 'system', content: "Welcome to the game of destiny." });
-  sendInput("start", true); // Initial request
+  sendInput("start", true);
 });
