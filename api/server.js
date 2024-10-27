@@ -152,7 +152,8 @@ app.post('/generate-image', async (req, res) => {
       body: JSON.stringify({ inputs: summarizedPrompt }), 
         parameters: {
           width: 256,
-          height: 256
+          height: 256,
+          style_preset: comic-book
       }
     });
 
